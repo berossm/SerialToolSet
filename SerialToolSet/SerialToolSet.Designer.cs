@@ -1,7 +1,7 @@
 ﻿
 namespace SerialToolSet
 {
-    partial class Form1
+    partial class SerialToolSet
     {
         /// <summary>
         /// Required designer variable.

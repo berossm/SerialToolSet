@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace SerialToolSet
 {
-    public partial class Form1 : Form
+    public partial class SerialToolSet : Form
     {
-        public Form1()
+        public SerialToolSet()
         {
             InitializeComponent();
         }
