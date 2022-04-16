@@ -206,6 +206,7 @@ namespace SerialToolSet
                 Connect(com, create_pipe);
                 mnuConnect.Enabled = false;
                 mnuDisconnect.Enabled = true;
+                mnuFuzzing.Enabled = false;
             }
             
         }
@@ -215,6 +216,15 @@ namespace SerialToolSet
             Close_Connection();
             mnuConnect.Enabled = true;
             mnuDisconnect.Enabled = false;
+            mnuFuzzing.Enabled = true;
+        }
+
+        private void mnuFuzzing_Click(object sender, EventArgs e)
+        {
+            mnuConnect.Enabled = false;
+            //TODO: Launch fuzzing stuff
+            //Upon Fuzzing closing reenable, just do that for now until the rest is added.
+            mnuConnect.Enabled = true;
         }
 
         private void mnuRefresh_Click(object sender, EventArgs e)
@@ -433,6 +443,8 @@ namespace SerialToolSet
             ASCII = 0,
             RAW_8_BIT
         };
+
+
     }
 
     
