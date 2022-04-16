@@ -64,13 +64,7 @@ namespace SerialToolSet
             }
             new_text += " ";
             return new_text;
-        }
-
-        public enum CHECKSUM
-        {
-            NONE = 0,
-            BIT72COMP
-        }        
+        }      
 
         public enum DATASIZE
         {
@@ -275,6 +269,12 @@ namespace SerialToolSet
 
     public class Checksums
     {
+        public enum CHECKSUM
+        {
+            NONE = 0,
+            BIT72COMP
+        }
+
         static public string SevenBitSumTwosCompChecksum(string hex_str, int buffer_size)
         {
             

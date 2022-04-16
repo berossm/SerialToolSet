@@ -24,6 +24,7 @@ namespace SerialToolSet
         private LogSettings log_helper;
         private NamedPipeStore pipes;
         private bool BCD = false;
+        private DATA_ENCODING selected_encoding;
 
         public SerialToolSet()
         {
@@ -33,6 +34,7 @@ namespace SerialToolSet
         private void SerialToolSet_Load(object sender, EventArgs e)
         {
             comm_helper = new CommObjects();
+            pipes = new NamedPipeStore();
             List<string> tmp_str = new List<string>();
             cmboPort.Items.AddRange(comm_helper.populate_com(ref tmp_str).ToArray());
             log_helper = new LogSettings(System.IO.Directory.GetCurrentDirectory());
@@ -46,6 +48,8 @@ namespace SerialToolSet
             cmboStopBits.SelectedIndex = 1;
             mnuByteOrder.SelectedIndex = 0;
             cmboChecksum.SelectedIndex = 0;
+            cmboData.SelectedIndex = 0;
+            selected_encoding = DATA_ENCODING.ASCII;
             update_text = new ConcurrentQueue<string>();
             read_queue = new ConcurrentQueue<byte>();
             try
@@ -133,7 +137,7 @@ namespace SerialToolSet
         {
 
             SerialPort sp = (SerialPort)sender;
-            if (mnuASCII.Checked)
+            if (selected_encoding == DATA_ENCODING.ASCII)
             {
                 bool end_of_data = false;
                 while (!end_of_data)
@@ -153,7 +157,7 @@ namespace SerialToolSet
                 else { UpdateText(e); }
 
             }
-            else
+            else if (selected_encoding == DATA_ENCODING.RAW_8_BIT)
             {
                 Byte[] read_buffer = new Byte[buffer_size];
                 int read_bytes = 0;
@@ -200,8 +204,22 @@ namespace SerialToolSet
                     com = selected_com.Substring(port_start, com_len);
                 }
                 Connect(com, create_pipe);
+                mnuConnect.Enabled = false;
+                mnuDisconnect.Enabled = true;
             }
             
+        }
+
+        private void mnuDisconnect_Click(object sender, EventArgs e)
+        {
+            Close_Connection();
+            mnuConnect.Enabled = true;
+            mnuDisconnect.Enabled = false;
+        }
+
+        private void mnuRefresh_Click(object sender, EventArgs e)
+        {
+            updateSerialPorts();
         }
 
         private void Connect(string portName, bool create_pipe)
@@ -243,7 +261,7 @@ namespace SerialToolSet
                         read_queue.TryDequeue(out junk_byte);
                     }
 
-                    if (mnuData8.Checked)
+                    if (selected_encoding == DATA_ENCODING.RAW_8_BIT)
                     {
                         statConnection.Text = "8-Bit HEX";
                         //TODO: Update for more data formats
@@ -251,7 +269,7 @@ namespace SerialToolSet
                         txtSend.CharacterCasing = CharacterCasing.Upper;
                         toolTip1.SetToolTip(txtSend, "Only 0-9 & A-F are valid characters.  Do not includes 0x in front of values.  Spaces are optional.");
                     }
-                    else if (mnuASCII.Checked)
+                    else if (selected_encoding == DATA_ENCODING.ASCII)
                     {
                         statConnection.Text = "ASCII";
                         toolTip1.SetToolTip(txtSend, "All displayable characters allowed.");
@@ -292,14 +310,13 @@ namespace SerialToolSet
         private void txtSend_TextChanged(object sender, EventArgs e)
         {
             //TODO: Update for encoding and checksum
-            if (mnuASCII.Checked)
+            if (selected_encoding == DATA_ENCODING.ASCII)
             {
                 return;
             }
-            else
-            if (CommObjects.validate_hex_string(txtSend.Text, CommObjects.DATASIZE.BIT_8))
+            else if (CommObjects.validate_hex_string(txtSend.Text, CommObjects.DATASIZE.BIT_8))
             {
-                if (cmboChecksum.SelectedIndex == (int)CommObjects.CHECKSUM.BIT72COMP)
+                if (cmboChecksum.SelectedIndex == (int)Checksums.CHECKSUM.BIT72COMP)
                 {
                     txtSend.BackColor = Color.White; //TODO: Is this the correct place?
                     Checksums.SevenBitSumTwosCompChecksum(txtSend.Text, buffer_size);
@@ -322,11 +339,11 @@ namespace SerialToolSet
         {
             if (e.KeyCode == Keys.Enter)
             {
-                if (mnuASCII.Checked)
+                if (selected_encoding == DATA_ENCODING.ASCII)
                 {
                     send_ascii();
                 }
-                else if (mnuData8.Checked)
+                else if (selected_encoding == DATA_ENCODING.RAW_8_BIT)
                 {
                     send_raw();
                 }
@@ -336,11 +353,11 @@ namespace SerialToolSet
 
         private void btnSend_Click(object sender, EventArgs e)
         {
-            if (mnuASCII.Checked)
+            if (selected_encoding == DATA_ENCODING.ASCII)
             {
                 send_ascii();
             }
-            else if (mnuData8.Checked)
+            else if (selected_encoding == DATA_ENCODING.RAW_8_BIT)
             {
                 send_raw();
             }
@@ -388,5 +405,35 @@ namespace SerialToolSet
                 }
             }
         }
+
+        private void updateSerialPorts()
+        {
+            List<string> tmp_str = pipes.GetList();
+            cmboPort.Items.AddRange(comm_helper.populate_com(ref tmp_str).ToArray());
+        }
+
+        private void mnuNamedPipes_Click(object sender, EventArgs e)
+        {
+            NamedPipes new_form = new NamedPipes(ref pipes);
+            new_form.ShowDialog(this);
+            if (!serialPort1.IsOpen)
+            {
+                //Not connected so update.
+                updateSerialPorts();
+            }
+        }
+
+        private void cmboData_TextChanged(object sender, EventArgs e)
+        {
+            selected_encoding = (DATA_ENCODING)cmboData.SelectedIndex;
+        }
+
+        enum DATA_ENCODING
+        {
+            ASCII = 0,
+            RAW_8_BIT
+        };
     }
+
+    
 }

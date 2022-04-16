@@ -57,6 +57,12 @@
     <Compile Include="LogSettingsForm.Designer.cs">
       <DependentUpon>LogSettingsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="NamedPipes.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="NamedPipes.Designer.cs">
+      <DependentUpon>NamedPipes.cs</DependentUpon>
+    </Compile>
     <Compile Include="NamedPipeStore.cs" />
     <Compile Include="SerialToolSet.cs">
       <SubType>Form</SubType>
@@ -68,6 +74,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="LogSettingsForm.resx">
       <DependentUpon>LogSettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NamedPipes.resx">
+      <DependentUpon>NamedPipes.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

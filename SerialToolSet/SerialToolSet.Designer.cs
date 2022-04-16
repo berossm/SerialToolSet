@@ -31,6 +31,7 @@ namespace SerialToolSet
         {
             this.components = new System.ComponentModel.Container();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.statConnection = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuConnect = new System.Windows.Forms.ToolStripMenuItem();
@@ -40,7 +41,8 @@ namespace SerialToolSet
             this.mnuSerialSettings = new System.Windows.Forms.ToolStripMenuItem();
             this.portToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cmboPort = new System.Windows.Forms.ToolStripComboBox();
-            this.namedPipesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuNamedPipes = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuRefresh = new System.Windows.Forms.ToolStripMenuItem();
             this.baudToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cmboBaud = new System.Windows.Forms.ToolStripComboBox();
             this.parityToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -53,8 +55,9 @@ namespace SerialToolSet
             this.mnuLogSettings = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuLoggingEnabled = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuEncoding = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuASCII = new System.Windows.Forms.ToolStripMenuItem();
-            this.mnuData8 = new System.Windows.Forms.ToolStripMenuItem();
+            this.mnuByteOrder = new System.Windows.Forms.ToolStripComboBox();
+            this.checksumToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmboChecksum = new System.Windows.Forms.ToolStripComboBox();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.checksumsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -64,12 +67,8 @@ namespace SerialToolSet
             this.txtChecksum = new System.Windows.Forms.TextBox();
             this.btnSend = new System.Windows.Forms.Button();
             this.txtSend = new System.Windows.Forms.TextBox();
-            this.mnuRefresh = new System.Windows.Forms.ToolStripMenuItem();
-            this.statConnection = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.mnuByteOrder = new System.Windows.Forms.ToolStripComboBox();
-            this.checksumToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.cmboChecksum = new System.Windows.Forms.ToolStripComboBox();
+            this.cmboData = new System.Windows.Forms.ToolStripComboBox();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -83,6 +82,12 @@ namespace SerialToolSet
             this.statusStrip1.Size = new System.Drawing.Size(712, 22);
             this.statusStrip1.TabIndex = 0;
             this.statusStrip1.Text = "statusStrip1";
+            // 
+            // statConnection
+            // 
+            this.statConnection.Name = "statConnection";
+            this.statConnection.Size = new System.Drawing.Size(79, 17);
+            this.statConnection.Text = "Disconnected";
             // 
             // menuStrip1
             // 
@@ -120,6 +125,7 @@ namespace SerialToolSet
             this.mnuDisconnect.Name = "mnuDisconnect";
             this.mnuDisconnect.Size = new System.Drawing.Size(133, 22);
             this.mnuDisconnect.Text = "&Disconnect";
+            this.mnuDisconnect.Click += new System.EventHandler(this.mnuDisconnect_Click);
             // 
             // mnuExit
             // 
@@ -155,10 +161,10 @@ namespace SerialToolSet
             // 
             this.portToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.cmboPort,
-            this.namedPipesToolStripMenuItem,
+            this.mnuNamedPipes,
             this.mnuRefresh});
             this.portToolStripMenuItem.Name = "portToolStripMenuItem";
-            this.portToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.portToolStripMenuItem.Size = new System.Drawing.Size(125, 22);
             this.portToolStripMenuItem.Text = "&Com Port";
             // 
             // cmboPort
@@ -166,18 +172,26 @@ namespace SerialToolSet
             this.cmboPort.Name = "cmboPort";
             this.cmboPort.Size = new System.Drawing.Size(121, 23);
             // 
-            // namedPipesToolStripMenuItem
+            // mnuNamedPipes
             // 
-            this.namedPipesToolStripMenuItem.Name = "namedPipesToolStripMenuItem";
-            this.namedPipesToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
-            this.namedPipesToolStripMenuItem.Text = "&Named Pipes...";
+            this.mnuNamedPipes.Name = "mnuNamedPipes";
+            this.mnuNamedPipes.Size = new System.Drawing.Size(181, 22);
+            this.mnuNamedPipes.Text = "&Named Pipes...";
+            this.mnuNamedPipes.Click += new System.EventHandler(this.mnuNamedPipes_Click);
+            // 
+            // mnuRefresh
+            // 
+            this.mnuRefresh.Name = "mnuRefresh";
+            this.mnuRefresh.Size = new System.Drawing.Size(181, 22);
+            this.mnuRefresh.Text = "&Refresh";
+            this.mnuRefresh.Click += new System.EventHandler(this.mnuRefresh_Click);
             // 
             // baudToolStripMenuItem
             // 
             this.baudToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.cmboBaud});
             this.baudToolStripMenuItem.Name = "baudToolStripMenuItem";
-            this.baudToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.baudToolStripMenuItem.Size = new System.Drawing.Size(125, 22);
             this.baudToolStripMenuItem.Text = "&Baud";
             // 
             // cmboBaud
@@ -199,7 +213,7 @@ namespace SerialToolSet
             this.parityToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.cmboParity});
             this.parityToolStripMenuItem.Name = "parityToolStripMenuItem";
-            this.parityToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.parityToolStripMenuItem.Size = new System.Drawing.Size(125, 22);
             this.parityToolStripMenuItem.Text = "&Parity";
             // 
             // cmboParity
@@ -216,7 +230,7 @@ namespace SerialToolSet
             this.dataBitsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.cmboDataBits});
             this.dataBitsToolStripMenuItem.Name = "dataBitsToolStripMenuItem";
-            this.dataBitsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.dataBitsToolStripMenuItem.Size = new System.Drawing.Size(125, 22);
             this.dataBitsToolStripMenuItem.Text = "&Data Bits";
             // 
             // cmboDataBits
@@ -231,7 +245,7 @@ namespace SerialToolSet
             this.stopBitsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.cmboStopBits});
             this.stopBitsToolStripMenuItem.Name = "stopBitsToolStripMenuItem";
-            this.stopBitsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.stopBitsToolStripMenuItem.Size = new System.Drawing.Size(125, 22);
             this.stopBitsToolStripMenuItem.Text = "&Stop Bits";
             // 
             // cmboStopBits
@@ -265,28 +279,35 @@ namespace SerialToolSet
             // mnuEncoding
             // 
             this.mnuEncoding.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mnuASCII,
-            this.mnuData8,
+            this.cmboData,
             this.mnuByteOrder});
             this.mnuEncoding.Name = "mnuEncoding";
             this.mnuEncoding.Size = new System.Drawing.Size(180, 22);
             this.mnuEncoding.Text = "&Encoding";
             // 
-            // mnuASCII
+            // mnuByteOrder
             // 
-            this.mnuASCII.Checked = true;
-            this.mnuASCII.CheckOnClick = true;
-            this.mnuASCII.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.mnuASCII.Name = "mnuASCII";
-            this.mnuASCII.Size = new System.Drawing.Size(181, 22);
-            this.mnuASCII.Text = "&ASCII";
+            this.mnuByteOrder.Items.AddRange(new object[] {
+            "MSB First",
+            "LSB First"});
+            this.mnuByteOrder.Name = "mnuByteOrder";
+            this.mnuByteOrder.Size = new System.Drawing.Size(121, 23);
             // 
-            // mnuData8
+            // checksumToolStripMenuItem
             // 
-            this.mnuData8.CheckOnClick = true;
-            this.mnuData8.Name = "mnuData8";
-            this.mnuData8.Size = new System.Drawing.Size(181, 22);
-            this.mnuData8.Text = "&8-bit";
+            this.checksumToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.cmboChecksum});
+            this.checksumToolStripMenuItem.Name = "checksumToolStripMenuItem";
+            this.checksumToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.checksumToolStripMenuItem.Text = "&Checksum";
+            // 
+            // cmboChecksum
+            // 
+            this.cmboChecksum.Items.AddRange(new object[] {
+            "None",
+            "7-bit 2\'s comp sum"});
+            this.cmboChecksum.Name = "cmboChecksum";
+            this.cmboChecksum.Size = new System.Drawing.Size(121, 23);
             // 
             // toolsToolStripMenuItem
             // 
@@ -359,41 +380,14 @@ namespace SerialToolSet
             this.txtSend.TextChanged += new System.EventHandler(this.txtSend_TextChanged);
             this.txtSend.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtSend_KeyDown);
             // 
-            // mnuRefresh
+            // cmboData
             // 
-            this.mnuRefresh.Name = "mnuRefresh";
-            this.mnuRefresh.Size = new System.Drawing.Size(181, 22);
-            this.mnuRefresh.Text = "&Refresh";
-            // 
-            // statConnection
-            // 
-            this.statConnection.Name = "statConnection";
-            this.statConnection.Size = new System.Drawing.Size(79, 17);
-            this.statConnection.Text = "Disconnected";
-            // 
-            // mnuByteOrder
-            // 
-            this.mnuByteOrder.Items.AddRange(new object[] {
-            "MSB First",
-            "LSB First"});
-            this.mnuByteOrder.Name = "mnuByteOrder";
-            this.mnuByteOrder.Size = new System.Drawing.Size(121, 23);
-            // 
-            // checksumToolStripMenuItem
-            // 
-            this.checksumToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.cmboChecksum});
-            this.checksumToolStripMenuItem.Name = "checksumToolStripMenuItem";
-            this.checksumToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.checksumToolStripMenuItem.Text = "&Checksum";
-            // 
-            // cmboChecksum
-            // 
-            this.cmboChecksum.Items.AddRange(new object[] {
-            "None",
-            "7-bit 2\'s comp sum"});
-            this.cmboChecksum.Name = "cmboChecksum";
-            this.cmboChecksum.Size = new System.Drawing.Size(121, 23);
+            this.cmboData.Items.AddRange(new object[] {
+            "ASCII",
+            "8-bit raw"});
+            this.cmboData.Name = "cmboData";
+            this.cmboData.Size = new System.Drawing.Size(121, 23);
+            this.cmboData.TextChanged += new System.EventHandler(this.cmboData_TextChanged);
             // 
             // SerialToolSet
             // 
@@ -433,7 +427,7 @@ namespace SerialToolSet
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.IO.Ports.SerialPort serialPort1;
         private System.Windows.Forms.ToolStripComboBox cmboPort;
-        private System.Windows.Forms.ToolStripMenuItem namedPipesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem mnuNamedPipes;
         private System.Windows.Forms.ToolStripComboBox cmboBaud;
         private System.Windows.Forms.ToolStripMenuItem mnuConnect;
         private System.Windows.Forms.ToolStripMenuItem mnuDisconnect;
@@ -448,8 +442,6 @@ namespace SerialToolSet
         private System.Windows.Forms.ToolStripMenuItem mnuLogSettings;
         private System.Windows.Forms.ToolStripMenuItem mnuLoggingEnabled;
         private System.Windows.Forms.ToolStripMenuItem mnuEncoding;
-        private System.Windows.Forms.ToolStripMenuItem mnuASCII;
-        private System.Windows.Forms.ToolStripMenuItem mnuData8;
         private System.Windows.Forms.TextBox txtRecieve;
         private System.Windows.Forms.ToolStripComboBox cmboDataBits;
         private System.Windows.Forms.TextBox txtChecksum;
@@ -461,6 +453,7 @@ namespace SerialToolSet
         private System.Windows.Forms.ToolStripComboBox mnuByteOrder;
         private System.Windows.Forms.ToolStripMenuItem checksumToolStripMenuItem;
         private System.Windows.Forms.ToolStripComboBox cmboChecksum;
+        private System.Windows.Forms.ToolStripComboBox cmboData;
     }
 }
 
